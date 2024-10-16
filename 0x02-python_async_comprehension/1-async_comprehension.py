@@ -1,20 +1,10 @@
 #!/usr/bin/env python3
-
-"""
-Module to generate random numbers as well
-"""
-
-
+""" Async Comprehension """
+import asyncio
 from typing import List
 async_generator = __import__('0-async_generator').async_generator
 
 
-return_type = List[float]
-
-
-async def async_comprehension() -> return_type:
-    """
-    Returns some 10 random numbers based on the
-    other function defined in the previous module
-    """
-    return [num async for num in async_generator()]
+async def async_comprehension() -> List[float]:
+    """ Returns List of random floats [0, 10) generated after 10 seconds """
+    return [i async for i in async_generator()]
