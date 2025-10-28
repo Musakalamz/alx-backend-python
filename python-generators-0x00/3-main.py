@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-lazy_paginator = __import__('2-lazy_paginate').lazy_paginate
+lazy_paginator = __import__('2-lazy_paginate').lazypaginate
 
 try:
     for page in lazy_paginator(100):

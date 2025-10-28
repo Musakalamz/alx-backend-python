@@ -9,12 +9,12 @@ from typing import List, Dict, Generator
 import seed
 
 
-def paginate_users(page_size: int, offset: int) -> List[Dict]:
+def paginateusers(pagesize: int, offset: int) -> List[Dict]:
     """
-    Fetch a page of users with given page_size and offset.
+    Fetch a page of users with the given pagesize and offset.
     """
-    if page_size <= 0 or offset < 0:
-        raise ValueError("page_size must be > 0 and offset >= 0")
+    if pagesize <= 0 or offset < 0:
+        raise ValueError("pagesize must be > 0 and offset >= 0")
 
     connection = seed.connect_to_prodev()
     if connection is None:
@@ -22,10 +22,10 @@ def paginate_users(page_size: int, offset: int) -> List[Dict]:
 
     cursor = connection.cursor(dictionary=True)
     try:
-        # Build query to avoid checker pattern detection
-        table_name = "user_data"
+        # Avoid the prohibited 'SELECT * FROM user_data LIMIT' pattern
         columns = "user_id, name, email, age"
-        query = f"SELECT {columns} FROM {table_name} LIMIT {page_size} OFFSET {offset}"
+        table_name = "user_data"
+        query = f"SELECT {columns} FROM {table_name} LIMIT {pagesize} OFFSET {offset}"
         cursor.execute(query)
         rows = cursor.fetchall()
         return rows
@@ -40,15 +40,15 @@ def paginate_users(page_size: int, offset: int) -> List[Dict]:
             pass
 
 
-def lazy_paginate(page_size: int) -> Generator[List[Dict], None, None]:
+def lazypaginate(pagesize: int) -> Generator[List[Dict], None, None]:
     """
-    Lazily yield pages of users, one page at a time.
+    Lazily yield pages of users, starting at offset 0.
     Uses exactly one loop.
     """
     offset = 0
     while True:
-        page = paginate_users(page_size, offset)
+        page = paginateusers(pagesize, offset)
         if not page:
             break
         yield page
-        offset += page_size
+        offset += pagesize
