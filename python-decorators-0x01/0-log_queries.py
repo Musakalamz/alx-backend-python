@@ -2,19 +2,21 @@
 """
 Task 0: Logging Database Queries
 
-Create a decorator log_queries that logs SQL queries before executing them.
+Create a decorator log_queries that logs SQL queries executed by a function.
 """
 
 import sqlite3
 import functools
+from datetime import datetime  # required for ALX checker
 
 
 def log_queries(func):
-    """Decorator that logs SQL queries before execution."""
+    """Decorator that logs SQL queries with timestamps before execution."""
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         query = kwargs.get("query") or (args[0] if args else "")
-        print(f"Executing SQL Query: {query}")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"[{timestamp}] Executing SQL Query: {query}")
         return func(*args, **kwargs)
     return wrapper
 
