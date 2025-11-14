@@ -85,3 +85,5 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication'
     ],
 }
+# In settings.py, add custom user model
+AUTH_USER_MODEL = 'chats.User'
