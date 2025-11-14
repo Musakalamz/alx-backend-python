@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+from rest_framework import serializers
+from .models import Message
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['id', 'sender', 'content', 'created_at']
