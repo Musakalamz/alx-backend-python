@@ -9,6 +9,8 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, db_index=True)
     password_hash = models.CharField(max_length=255)  # checker requires explicit field name
     phone_number = models.CharField(max_length=32, null=True, blank=True)
+    first_name = models.CharField(max_length=150, blank=False, null=False)
+    last_name = models.CharField(max_length=150, blank=False, null=False)
     ROLE_CHOICES = (
         ('guest', 'Guest'),
         ('host', 'Host'),
