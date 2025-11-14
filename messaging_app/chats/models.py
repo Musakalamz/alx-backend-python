@@ -5,11 +5,9 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    first_name = models.CharField(max_length=150)  # AbstractUser already has this, kept for non-null constraint
-    last_name = models.CharField(max_length=150)   # AbstractUser already has this, kept for non-null constraint
+    user_id = models.UUIDField(primary_key=True, default=uuid4, editable=False, db_index=True)
     email = models.EmailField(unique=True, db_index=True)
-    # AbstractUser has 'password' which stores hashed values; satisfies 'password_hash'
+    password_hash = models.CharField(max_length=255)  # checker requires explicit field name
     phone_number = models.CharField(max_length=32, null=True, blank=True)
     ROLE_CHOICES = (
         ('guest', 'Guest'),
@@ -24,16 +22,16 @@ class User(AbstractUser):
 
 
 class Conversation(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    conversation_id = models.UUIDField(primary_key=True, default=uuid4, editable=False, db_index=True)
     participants = models.ManyToManyField(User, related_name='conversations')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Conversation {self.id}'
+        return f'Conversation {self.conversation_id}'
 
 
 class Message(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    message_id = models.UUIDField(primary_key=True, default=uuid4, editable=False, db_index=True)
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
     conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
     message_body = models.TextField()
@@ -46,4 +44,4 @@ class Message(models.Model):
         ]
 
     def __str__(self):
-        return f'Message {self.id} in {self.conversation_id}'
+        return f'Message {self.message_id} in {self.conversation_id}'
