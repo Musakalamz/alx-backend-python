@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-from django.urls import path
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import MessageViewSet, ping
+from .views import ConversationViewSet, MessageViewSet
 
 router = DefaultRouter()
+router.register('conversations', ConversationViewSet, basename='conversation')
 router.register('messages', MessageViewSet, basename='message')
 
 urlpatterns = [
-    path('ping/', ping),
+    path('', include(router.urls)),
 ]
-urlpatterns += router.urls
