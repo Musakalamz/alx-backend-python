@@ -4,6 +4,6 @@ from .models import Message
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'sender', 'created_at')
-    search_fields = ('sender', 'content')
-    list_filter = ('created_at',)
+    list_display = ('message_id', 'sender', 'sent_at')
+    search_fields = ('sender__username', 'message_body')
+    list_filter = ('sent_at',)

@@ -82,7 +82,8 @@ REST_FRAMEWORK = {
 
     # Enable session-based authentication
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication'
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
     ],
 }
 AUTH_USER_MODEL = 'chats.User'
