@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404
 
 from .models import User, Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
+from .filters import MessageFilter
+from .pagination import MessagePagination
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
@@ -43,6 +45,8 @@ class MessageViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['sender__username', 'message_body']
     ordering_fields = ['sent_at']
+    filterset_class = MessageFilter
+    pagination_class = MessagePagination
 
     def get_queryset(self):
         return Message.objects.filter(conversation__participants=self.request.user).select_related('sender', 'conversation').order_by('-sent_at')
