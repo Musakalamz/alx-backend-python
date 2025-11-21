@@ -1,0 +1,153 @@
+{
+  "info": {
+    "name": "Messaging App API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Obtain Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/token/",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "8000",
+          "path": ["api","token",""]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"<username>\",\n  \"password\": \"<password>\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/token/refresh/",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "8000",
+          "path": ["api","token","refresh",""]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refresh\": \"<refresh>\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Conversations - Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access}}"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/conversations/",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "8000",
+          "path": ["api","conversations",""]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"participants\": [\"<uuid1>\", \"<uuid2>\"]\n}"
+        }
+      }
+    },
+    {
+      "name": "Conversations - List",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access}}"}
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/conversations/",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "8000",
+          "path": ["api","conversations",""]
+        }
+      }
+    },
+    {
+      "name": "Messages - Send",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access}}"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/messages/",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "8000",
+          "path": ["api","messages",""]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sender\": \"<your_user_uuid>\",\n  \"conversation\": \"<conversation_uuid>\",\n  \"message_body\": \"Hello\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Messages - List (Pagination)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access}}"}
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/messages/?page=1",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "8000",
+          "path": ["api","messages",""],
+          "query": [{"key": "page", "value": "1"}]
+        }
+      }
+    },
+    {
+      "name": "Messages - Filters",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access}}"}
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/messages/?conversation={{conversation}}&participant={{user}}&sent_after={{after}}&sent_before={{before}}&message_body=hello",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "8000",
+          "path": ["api","messages",""],
+          "query": [
+            {"key": "conversation", "value": "{{conversation}}"},
+            {"key": "participant", "value": "{{user}}"},
+            {"key": "sent_after", "value": "{{after}}"},
+            {"key": "sent_before", "value": "{{before}}"},
+            {"key": "message_body", "value": "hello"}
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {"key": "access", "value": ""},
+    {"key": "conversation", "value": ""},
+    {"key": "user", "value": ""},
+    {"key": "after", "value": ""},
+    {"key": "before", "value": ""}
+  ]
+}
