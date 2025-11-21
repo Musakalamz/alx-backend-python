@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from collections import deque, defaultdict
 from django.conf import settings
@@ -44,7 +44,7 @@ class OffensiveLanguageMiddleware:
             now = timezone.now()
             ip = self._client_ip(request)
             dq = self.store[ip]
-            cutoff = now - timezone.timedelta(seconds=self.window_seconds)
+            cutoff = now - timedelta(seconds=self.window_seconds)
             while dq and dq[0] < cutoff:
                 dq.popleft()
             if len(dq) >= self.limit:
@@ -62,7 +62,7 @@ class RolepermissionMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self.write_methods = {'POST', 'PUT', 'PATCH', 'DELETE'}
-        self.allowed_roles = {'admin'}
+        self.allowed_roles = {'admin', 'moderator'}
 
     def __call__(self, request):
         if request.method in self.write_methods:
