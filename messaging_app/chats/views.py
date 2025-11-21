@@ -45,7 +45,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     ordering_fields = ['sent_at']
 
     def get_queryset(self):
-        return Message.objects.select_related('sender', 'conversation').filter(conversation__participants=self.request.user).order_by('-sent_at')
+        return Message.objects.filter(conversation__participants=self.request.user).select_related('sender', 'conversation').order_by('-sent_at')
 
     def create(self, request, *args, **kwargs):
         sender_id = request.data.get('sender')
