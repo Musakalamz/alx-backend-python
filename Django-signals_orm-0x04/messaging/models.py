@@ -10,7 +10,7 @@ class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_messages")
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Message(from={self.sender}, to={self.receiver})"
@@ -24,4 +24,3 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification(user={self.user}, message_id={self.message_id})"
-
