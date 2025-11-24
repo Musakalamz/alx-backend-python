@@ -12,6 +12,7 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
+    edited_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="edited_messages")
     parent_message = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="replies")
     read = models.BooleanField(default=False)
 
@@ -72,8 +73,8 @@ Message.add_to_class("objects", MessageManager())
 
 
 class UnreadMessagesManager(models.Manager):
-    def for_user(self, user):
-        return self.get_queryset().filter(receiver=user, read=False).only("id", "content", "timestamp", "sender_id", "receiver_id", "parent_message_id")
+    def unread_for_user(self, user):
+        return self.get_queryset().filter(receiver=user, read=False).only("id", "content", "timestamp", "sender_id", "receiver_id", "parent_message_id").select_related("sender", "receiver")
 
 
 Message.add_to_class("unread", UnreadMessagesManager())
