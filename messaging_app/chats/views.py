@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsParticipantOfConversation
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from .models import User, Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
@@ -50,6 +52,10 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Message.objects.filter(conversation__participants=self.request.user).select_related('sender', 'conversation').order_by('-sent_at')
+
+    @method_decorator(cache_page(60))
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         sender_id = request.data.get('sender')

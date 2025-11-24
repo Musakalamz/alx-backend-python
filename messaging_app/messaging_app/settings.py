@@ -96,3 +96,10 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 AUTH_USER_MODEL = 'chats.User'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
