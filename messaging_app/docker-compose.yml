@@ -1,0 +1,41 @@
+version: '3.9'
+services:
+  db:
+    image: mysql:8.0
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_ENGINE: mysql
+      DB_NAME: ${MYSQL_DB}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_HOST: db
+      DB_PORT: 3306
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+volumes:
+  mysql_data:
+    driver: local
