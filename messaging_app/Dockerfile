@@ -7,4 +7,5 @@ RUN apt-get update && apt-get install -y gcc default-libmysqlclient-dev && rm -r
 RUN pip install --no-cache-dir -r /app/requirements.txt
 COPY . /app
 EXPOSE 8000
+LABEL run_hint="docker run -p 8000:8000 messaging-app:latest"
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
