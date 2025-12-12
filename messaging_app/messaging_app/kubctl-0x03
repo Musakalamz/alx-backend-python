@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# apply updated blue deployment (image 2.0)
+kubectl apply -f messaging_app/blue_deployment.yaml || minikube kubectl -- apply -f messaging_app/blue_deployment.yaml
+
+# trigger and monitor rollout
+kubectl rollout status deployment/messaging-app-blue || minikube kubectl -- rollout status deployment/messaging-app-blue
+
+# continuous curl to test downtime (requires cluster ingress/IP)
+URL=${URL:-http://messaging-app:8000/}
+for i in $(seq 1 20); do
+  curl -s -o /dev/null -w "%{http_code}\n" "$URL" || true
+  sleep 1
+done
+
+# verify pods
+kubectl get pods -l app=messaging-app,color=blue || minikube kubectl -- get pods -l app=messaging-app,color=blue
