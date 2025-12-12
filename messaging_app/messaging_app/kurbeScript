@@ -26,10 +26,9 @@ if [ "$STATUS" != "Running" ]; then
 fi
 
 if command -v kubectl >/dev/null 2>&1; then
-  KUBECTL="kubectl"
+  kubectl cluster-info
+  kubectl get pods
 else
-  KUBECTL="minikube kubectl --"
+  minikube kubectl -- cluster-info
+  minikube kubectl -- get pods -A
 fi
-
-$KUBECTL cluster-info
-$KUBECTL get pods -A
