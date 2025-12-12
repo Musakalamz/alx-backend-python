@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v minikube >/dev/null 2>&1; then
+  OS="$(uname -s)"
+  if [ "$OS" = "Darwin" ]; then
+    if command -v brew >/dev/null 2>&1; then brew install minikube; fi
+  elif [ "$OS" = "Linux" ]; then
+    curl -Lo minikube-linux-amd64 https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube
+    rm -f minikube-linux-amd64
+  else
+    if command -v choco >/dev/null 2>&1; then choco install minikube -y; fi
+    if command -v winget >/dev/null 2>&1; then winget install -e --id Kubernetes.minikube; fi
+  fi
+fi
+
+if ! command -v minikube >/dev/null 2>&1; then
+  echo "minikube not available" >&2
+  exit 1
+fi
+
+STATUS="$(minikube status --format '{{.Host}}')"
+if [ "$STATUS" != "Running" ]; then
+  minikube start
+fi
+
+if command -v kubectl >/dev/null 2>&1; then
+  KUBECTL="kubectl"
+else
+  KUBECTL="minikube kubectl --"
+fi
+
+$KUBECTL cluster-info
+$KUBECTL get pods -A
