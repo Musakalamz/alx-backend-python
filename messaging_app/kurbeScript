@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "[info] checking minikube and kubectl availability"
+if ! command -v minikube >/dev/null 2>&1; then
+  echo "[error] minikube is not installed. Please install Minikube (Linux) and retry." >&2
+  exit 1
+fi
+if ! command -v kubectl >/dev/null 2>&1; then
+  echo "[error] kubectl is not installed. Install kubectl and retry." >&2
+  exit 1
+fi
+
+echo "[info] verifying minikube status"
+STATUS=$(minikube status --format '{{.Host}}')
+if [ "$STATUS" != "Running" ]; then
+  echo "[info] starting minikube cluster"
+  minikube start
+else
+  echo "[info] minikube already running"
+fi
+
+echo "[info] verifying cluster info"
+kubectl cluster-info
+
+echo "[info] retrieving pods across all namespaces"
+kubectl get pods -A
+
+echo "[done] cluster is up and responding"
+
