@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DEPLOY="messaging-app"
+
+# scale to 3 replicas
+kubectl scale deployment ${DEPLOY} --replicas=3 || minikube kubectl -- scale deployment ${DEPLOY} --replicas=3
+
+# verify multiple pods
+kubectl get pods || minikube kubectl -- get pods -A
+
+# monitor resource usage
+kubectl top pods || minikube kubectl -- top pods || true
+
+# load test using wrk from a temporary pod
+kubectl delete pod wrk --ignore-not-found=true || true
+kubectl run wrk --rm -i --restart=Never --image=williamyeh/wrk -- -t4 -c32 -d10s http://${DEPLOY}:8000/ || \
+  minikube kubectl -- run wrk --rm -i --restart=Never --image=williamyeh/wrk -- -t4 -c32 -d10s http://${DEPLOY}:8000/
