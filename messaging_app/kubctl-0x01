@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DEPLOY="messaging-app"
+if command -v kubectl >/dev/null 2>&1; then
+  KUBECTL="kubectl"
+else
+  KUBECTL="minikube kubectl --"
+fi
+
+$KUBECTL scale deployment ${DEPLOY} --replicas=3
+$KUBECTL rollout status deployment/${DEPLOY}
+$KUBECTL get pods -l app=${DEPLOY}
+
+if command -v minikube >/dev/null 2>&1; then
+  minikube addons enable metrics-server || true
+fi
+
+$KUBECTL top pods || true
+
+$KUBECTL delete pod wrk --ignore-not-found=true
+$KUBECTL run wrk --rm -i --restart=Never --image=williamyeh/wrk -- -t4 -c32 -d10s http://${DEPLOY}:8000/
