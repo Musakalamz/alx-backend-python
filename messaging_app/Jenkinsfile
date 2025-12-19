@@ -13,9 +13,9 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh "${PYTHON} -m pip install --upgrade pip"
-                sh "${PYTHON} -m pip install -r messaging_app/requirements.txt"
-                sh "${PYTHON} -m pip install pytest pytest-html"
+                sh "pip3 install --upgrade pip"
+                sh "pip3 install -r messaging_app/requirements.txt"
+                sh "pip3 install pytest pytest-html"
             }
         }
         stage('Run Tests') {
