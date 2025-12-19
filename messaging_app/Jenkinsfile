@@ -26,6 +26,20 @@ pipeline {
                 archiveArtifacts artifacts: 'pytest-report.html', fingerprint: true
             }
         }
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t messaging-app:latest -f messaging_app/Dockerfile ."
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                    sh "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
+                    sh "docker tag messaging-app:latest ${DOCKERHUB_USERNAME}/messaging-app:latest"
+                    sh "docker push ${DOCKERHUB_USERNAME}/messaging-app:latest"
+                }
+            }
+        }
     }
     triggers {
     }
