@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    environment {
+        PYTHON = 'python3'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh "${PYTHON} -m pip install --upgrade pip"
+                sh "${PYTHON} -m pip install -r messaging_app/requirements.txt"
+                sh "${PYTHON} -m pip install pytest pytest-html"
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh "pytest -q --maxfail=1 --disable-warnings --html=pytest-report.html --self-contained-html"
+            }
+        }
+        stage('Archive Report') {
+            steps {
+                archiveArtifacts artifacts: 'pytest-report.html', fingerprint: true
+            }
+        }
+    }
+    triggers {
+    }
+}
