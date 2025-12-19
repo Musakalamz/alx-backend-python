@@ -2,11 +2,13 @@ pipeline {
     agent any
     environment {
         PYTHON = 'python3'
+        GITHUB_REPO = 'https://github.com/Musakalamz/alx-backend-python.git'
+        GITHUB_BRANCH = 'master'
     }
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/Musakalamz/alx-backend-python.git', credentialsId: 'github'
+                git branch: "${GITHUB_BRANCH}", url: "${GITHUB_REPO}", credentialsId: 'github'
             }
         }
         stage('Install Dependencies') {
