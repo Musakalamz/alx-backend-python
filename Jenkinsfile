@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    environment {
+        PYTHON = 'python3'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'https://github.com/Musakalamz/alx-backend-python.git', credentialsId: 'github'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh "${PYTHON} -m pip install --upgrade pip"
+                sh "${PYTHON} -m pip install -r messaging_app/requirements.txt"
+                sh "${PYTHON} -m pip install pytest pytest-html"
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh "pytest -q --maxfail=1 --disable-warnings --html=pytest-report.html --self-contained-html"
+            }
+        }
+        stage('Archive Report') {
+            steps {
+                archiveArtifacts artifacts: 'pytest-report.html', fingerprint: true
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t messaging-app:latest -f messaging_app/Dockerfile ."
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                    sh "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
+                    sh "docker tag messaging-app:latest ${DOCKERHUB_USERNAME}/messaging-app:latest"
+                    sh "docker push ${DOCKERHUB_USERNAME}/messaging-app:latest"
+                }
+            }
+        }
+    }
+    triggers {
+    }
+}
