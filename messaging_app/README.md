@@ -156,3 +156,38 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
+
+---
+
+## 🔧 CI/CD: Jenkins and GitHub Actions
+
+### Jenkins Pipeline
+
+- Pipeline file: `messaging_app/Jenkinsfile`
+- Stages: checkout, install dependencies, run pytest, archive HTML report, build Docker image, push to Docker Hub.
+- Start Jenkins:
+  - `docker run -d --name jenkins -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts`
+- Configure plugins: Git, Pipeline, ShiningPanda.
+- Set Docker Hub credentials in Jenkins with ID `dockerhub`.
+
+### GitHub Actions
+
+- Workflow file: `messaging_app/.github/workflows/ci.yml`
+- Triggers: push and pull_request.
+- Steps: checkout, setup Python 3.10, install dependencies, run flake8, run pytest with coverage, MySQL service for tests.
+
+### Docker
+
+- Dockerfile: `messaging_app/Dockerfile`
+- Build: `docker build -t messaging-app:latest -f messaging_app/Dockerfile .`
+- Run: `docker run -p 8000:8000 messaging-app:latest`
+
+### Kubernetes (Optional)
+
+- Manifest: `messaging_app/deployment.yaml`
+- Apply: `kubectl apply -f messaging_app/deployment.yaml`
+
+### Manual QA
+
+- Trigger Jenkins “Build Now” and verify stages.
+- Check GitHub Actions workflow results on pushes and PRs.
